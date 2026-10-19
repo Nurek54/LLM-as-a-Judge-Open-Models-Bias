@@ -1,0 +1,33 @@
+# Python 3.11+ (projekt zalozony na 3.14)
+# Instalacja: pip install -r requirements.txt
+
+# --- Dane (MT-Bench, Chatbot Arena, RewardBench z Hugging Face) ---
+datasets>=3.0
+huggingface_hub>=0.25
+pandas>=2.2
+numpy>=2.0
+pyarrow>=17.0
+
+# --- Sedziowie: lokalne modele GGUF (Ollama / llama.cpp server) i API zamkniete ---
+# Oba wystawiaja API zgodne z OpenAI, wiec wystarczy jeden klient
+openai>=1.50
+httpx>=0.27
+tenacity>=9.0
+
+# --- Metryki i analiza statystyczna (protokol uzgadniany z prowadzacym) ---
+scipy>=1.14
+statsmodels>=0.14
+scikit-learn>=1.5
+
+# --- Wizualizacja wynikow ---
+matplotlib>=3.9
+seaborn>=0.13
+
+# --- Konfiguracja i narzedzia ---
+pyyaml>=6.0
+python-dotenv>=1.0
+tqdm>=4.66
+
+# --- Notebooki do analizy ---
+jupyterlab>=4.2
+ipykernel>=6.29

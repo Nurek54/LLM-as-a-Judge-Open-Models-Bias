@@ -1,0 +1,31 @@
+# Srodowisko
+.venv/
+venv/
+__pycache__/
+*.pyc
+.ipynb_checkpoints/
+
+# IDE (PyCharm)
+.idea/
+
+# Sekrety (klucze API)
+.env
+
+# Duze pliki: dane, modele, surowe wyniki
+data/raw/*
+data/processed/*
+!data/**/.gitkeep
+models/*
+!models/.gitkeep
+*.gguf
+*.safetensors
+results/*
+!results/.gitkeep
+
+# LaTeX
+*.aux
+*.log
+*.out
+*.synctex.gz
+*.bbl
+*.blg
