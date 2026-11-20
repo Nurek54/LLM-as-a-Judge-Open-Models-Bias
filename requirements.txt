@@ -1,29 +1,32 @@
-# Python 3.11+ (projekt zalozony na 3.14)
+# Python 3.12 (venv w repo jest na 3.12)
 # Instalacja: pip install -r requirements.txt
+# Sędziowie działają w llama.cpp (llama-server), osobno od Pythona; patrz docs/setup.md.
 
-# --- Dane (MT-Bench, Chatbot Arena, RewardBench z Hugging Face) ---
+# --- Dane ---
 datasets>=3.0
 huggingface_hub>=0.25
 pandas>=2.2
 numpy>=2.0
 pyarrow>=17.0
-
-# --- Sedziowie: lokalne modele GGUF (Ollama / llama.cpp server) i API zamkniete ---
-# Oba wystawiaja API zgodne z OpenAI, wiec wystarczy jeden klient
-openai>=1.50
 httpx>=0.27
+
+# --- Modele: odczyt metadanych GGUF (liczba parametrów, bity/wagę) ---
+gguf>=0.10
+
+# --- Klient OpenAI-compatible (tłumaczenie LLMBar-PL, opcjonalny sędzia API) ---
+openai>=1.50
 tenacity>=9.0
 
-# --- Metryki i analiza statystyczna (protokol uzgadniany z prowadzacym) ---
+# --- Metryki i statystyka ---
 scipy>=1.14
 statsmodels>=0.14
 scikit-learn>=1.5
 
-# --- Wizualizacja wynikow ---
+# --- Wizualizacja ---
 matplotlib>=3.9
 seaborn>=0.13
 
-# --- Konfiguracja i narzedzia ---
+# --- Konfiguracja i narzędzia ---
 pyyaml>=6.0
 python-dotenv>=1.0
 tqdm>=4.66

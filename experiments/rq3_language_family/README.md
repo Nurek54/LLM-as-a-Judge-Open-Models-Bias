@@ -1,14 +1,24 @@
-# P3: Język oceny i preferencja własnej rodziny
+# P3: Język ocenianych odpowiedzi
 
-**Pytanie:** Czy sędziowie oceniają inaczej po polsku niż po angielsku oraz czy faworyzują
-odpowiedzi modeli z własnej rodziny?
+**Pytanie:** Jak język ocenianych odpowiedzi (polski vs angielski) wpływa na trafność
+i spójność werdyktów sędziów LLM?
 
-**Zmienne:** język pary (PL, EN), rodzina modelu, który wygenerował odpowiedź.
+**Hipoteza H3:** sędziowie są mniej trafni i mniej spójni po polsku niż po angielsku,
+a różnica jest mniejsza dla modelu specjalizowanego w polskim (Bielik).
 
-**Metryki:** różnica trafności i spójności PL vs EN, odsetek wyborów odpowiedzi własnej rodziny
-przy zbliżonej jakości.
+**Zmienna niezależna:** język pary (EN: LLMBar, PL: LLMBar-PL), prompt sędziego w tym samym
+języku co dane. Model i kwantyzacja (Q4_K_M) stałe w obrębie porównania.
 
-**Dane:** podzbiór par przetłumaczony na polski (sposób tłumaczenia do ustalenia), Chatbot Arena
-(znane modele-autorzy odpowiedzi).
+**Sędziowie:** qwen3.5-9b, gemma-4-12b, ministral-3-8b, bielik-11b (configs/experiments.yaml).
 
-**Do ustalenia z prowadzącym:** czy P3 nie łączy dwóch pytań. W razie potrzeby zostaje jedno z nich.
+**Metryki:** accuracy, κ, position consistency, soft position bias, format_mass; test McNemara
+na tych samych parach EN vs PL (`scripts/analyze.py p3 --mcnemar-lang <model> Q4_K_M`).
+
+**Dane:** LLMBar (419 par) i jego tłumaczenie (`scripts/translate_llmbar.py`), etykiety gold
+zachowane. Jakość tłumaczenia weryfikowana ręcznie na losowej próbie 40 par.
+Dodatkowo PLLuM-Align jako zbiór natywnie polski (loader do dopisania, gdy ustalimy format).
+
+**Maszyna:** MacBook M1 (cały eksperyment).
+
+Wątek „preferencji własnej rodziny” odłożony: wymagałby osobnego eksperymentu, a każde
+pytanie ma mieć jeden.

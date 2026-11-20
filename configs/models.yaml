@@ -1,0 +1,104 @@
+# Modele-sędziowie. Jedno źródło prawdy dla pobierania, kwantyzacji i serwowania.
+#
+# Każdy model pobieramy w BF16 (GGUF) i SAMI kwantyzujemy tym samym buildem llama.cpp,
+# bez imatrix. Dzięki temu Q4_K_M znaczy to samo dla każdej rodziny (P1), a drabina
+# w P2 różni się tylko poziomem kwantyzacji.
+#
+# source.repo / source.pattern: repo GGUF i DOKŁADNA nazwa pliku wag w BF16 (bez mmproj
+#   i MTP; sprawdzone `python scripts/models.py check`, 2026-11-20).
+# source.precision: precyzja pliku źródłowego (domyślnie BF16; F16 tylko gdy BF16 brak).
+# original: oficjalne repo z wagami (safetensors) - do raportu i na wypadek konwersji
+#   własnej (scripts/models.py convert, wymaga llama.cpp/convert_hf_to_gguf.py).
+#
+# chat_template_kwargs: przekazywane do szablonu czatu (llama-server --jinja).
+#   enable_thinking: false wyłącza thinking w Qwen3.5. Gramatyka i tak wymusza
+#   odpowiedź "A"/"B", ale szablon musi dostać tę flagę, żeby nie doklejał bloku <think>.
+# assistant_prefill: tekst, od którego zaczyna się odpowiedź asystenta (prefill).
+#   Na razie null wszędzie. Ustawić dopiero, jeśli `scripts/run.py check` pokaże,
+#   że model przed odpowiedzią chce wygenerować pusty blok myślenia (Gemma 4 12B).
+
+llama_cpp:
+  # Wpiszcie numer buildu, na którym robicie WSZYSTKIE eksperymenty (llama-server --version).
+  build: "12552"
+  # Katalog z binarkami (llama-server, llama-quantize). Można nadpisać w .env: LLAMA_CPP_DIR
+  dir: null
+
+server:
+  host: 127.0.0.1
+  port: 8080
+  ctx: 8192           # najdłuższa para (JudgeBench) ma ok. 9k znaków; więcej = więcej VRAM na KV
+  parallel: 1         # 1 slot = deterministyczne wyniki (bez batchowania różnych zapytań)
+  ngl: 999            # wszystkie warstwy na GPU; nadpisywane per model/kwantyzacja
+  extra_args: []      # np. ["-fa", "on"]; ustawcie raz i nie zmieniajcie między przebiegami
+
+quant_levels: [BF16, F16, Q8_0, Q6_K, Q4_K_M, Q3_K_M]
+
+models:
+  # ---------------- Qwen3.5 ----------------
+  qwen3.5-4b:
+    family: qwen3.5
+    size_b: 4
+    original: Qwen/Qwen3.5-4B
+    source: {repo: unsloth/Qwen3.5-4B-GGUF, pattern: "Qwen3.5-4B-BF16.gguf"}
+    chat_template_kwargs: {enable_thinking: false}
+  qwen3.5-9b:
+    family: qwen3.5
+    size_b: 9
+    original: Qwen/Qwen3.5-9B
+    source: {repo: unsloth/Qwen3.5-9B-GGUF, pattern: "Qwen3.5-9B-BF16.gguf"}
+    chat_template_kwargs: {enable_thinking: false}
+    ngl_by_quant: {BF16: 28}   # ~18 GB w BF16 > 16 GB VRAM; dobrać na laptopie (patrz docs/setup.md)
+
+  # ---------------- Gemma 4 ----------------
+  gemma-4-e4b:
+    family: gemma4
+    size_b: 4.5               # efektywnie; 8B z embeddingami
+    original: google/gemma-4-E4B-it
+    source: {repo: unsloth/gemma-4-E4B-it-GGUF, pattern: "gemma-4-E4B-it-BF16.gguf"}
+    chat_template_kwargs: {}
+  gemma-4-12b:
+    family: gemma4
+    size_b: 12
+    original: google/gemma-4-12B-it
+    source: {repo: unsloth/gemma-4-12b-it-GGUF, pattern: "gemma-4-12b-it-BF16.gguf"}
+    chat_template_kwargs: {}
+    assistant_prefill: null    # patrz komentarz na górze
+
+  # ---------------- Ministral 3 ----------------
+  ministral-3-8b:
+    family: ministral3
+    size_b: 8
+    original: mistralai/Ministral-3-8B-Instruct-2512
+    source: {repo: mistralai/Ministral-3-8B-Instruct-2512-GGUF, pattern: "Ministral-3-8B-Instruct-2512-BF16.gguf"}
+    chat_template_kwargs: {}
+    ngl_by_quant: {BF16: 30}
+  ministral-3-14b:
+    family: ministral3
+    size_b: 14
+    original: mistralai/Ministral-3-14B-Instruct-2512
+    source: {repo: mistralai/Ministral-3-14B-Instruct-2512-GGUF, pattern: "Ministral-3-14B-Instruct-2512-BF16.gguf"}
+    chat_template_kwargs: {}
+
+  # ---------------- Bielik v3 ----------------
+  bielik-4.5b:
+    family: bielik3
+    size_b: 4.6
+    original: speakleash/Bielik-4.5B-v3.0-Instruct     # repo gated: zaakceptować warunki na HF
+    # W repo jest tylko FP16 (brak BF16). Model jest tylko w P1/P3 (Q4_K_M), więc kwantyzujemy z FP16.
+    source: {repo: speakleash/Bielik-4.5B-v3.0-Instruct-GGUF, pattern: "Bielik-4.5B-v3.0-Instruct-fp16.gguf", precision: F16}
+    chat_template_kwargs: {}
+  bielik-11b:
+    family: bielik3
+    size_b: 11
+    original: speakleash/Bielik-11B-v3.0-Instruct
+    source: {repo: speakleash/Bielik-11B-v3.0-Instruct-GGUF, pattern: "Bielik-11B-v3.0-Instruct.bf16.gguf"}
+    chat_template_kwargs: {}
+
+  # ---------------- Llama 3.1 (opcjonalnie) ----------------
+  llama-3.1-8b:
+    family: llama3.1
+    size_b: 8
+    original: meta-llama/Llama-3.1-8B-Instruct           # gated
+    source: {repo: bartowski/Meta-Llama-3.1-8B-Instruct-GGUF, pattern: "*f16*.gguf", verify: true}
+    chat_template_kwargs: {}
+    optional: true

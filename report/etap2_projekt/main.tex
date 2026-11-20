@@ -1,0 +1,141 @@
+\documentclass[11pt,a4paper]{article}
+
+% --- Kodowanie i język ---
+\usepackage[utf8]{inputenc}
+\usepackage[T1]{fontenc}
+\usepackage[polish]{babel}
+\usepackage{lmodern}
+
+% --- Układ strony ---
+\usepackage[a4paper,margin=2.2cm]{geometry}
+\usepackage{microtype}
+\usepackage{parskip}
+
+% --- Listy, tabele, linki ---
+\usepackage{enumitem}
+\usepackage{longtable}
+\usepackage{array}
+\usepackage{booktabs}
+\usepackage[hidelinks]{hyperref}
+\usepackage{xurl}
+
+% --- Bibliografia (biblatex + biber, plik references.bib) ---
+\usepackage{csquotes}
+\usepackage[backend=biber,style=numeric-comp,sorting=none,
+            maxbibnames=99,giveninits=true,isbn=false]{biblatex}
+\addbibresource{references.bib}
+% Nie drukuj dat dostępu z Zotero ("Term. wiz.")
+\AtEveryBibitem{\clearfield{urlyear}\clearfield{urlmonth}\clearfield{urlday}}
+% Usuń pole volume, gdy jest tylko rokiem (np. ICLR z Zotero: "T. 2025")
+\DeclareSourcemap{\maps[datatype=bibtex]{
+  \map{\step[fieldsource=volume, match=\regexp{\A(19|20)\d\d\Z}, final]
+        \step[fieldset=volume, null]}
+  % Nie drukuj pola language ("en.") eksportowanego przez Zotero
+  \map{\step[fieldset=language, null]}
+  % Jeśli praca ma DOI, nie drukuj dodatkowo URL
+  \map{\step[fieldsource=doi, final]
+        \step[fieldset=url, null]}}}
+
+\newcolumntype{L}[1]{>{\raggedright\arraybackslash}p{#1}}
+
+\title{Etap I -- Studium literaturowe}
+\author{%
+  \small Miłosz Bedryło\\\small 272934 \and
+  \small Grzegorz Sienkiewicz\\\small 272868 \and
+  \small Kamil Sromek\\\small 272903
+}
+\date{\small Grupa 3}
+
+\begin{document}
+
+\maketitle
+\vspace{-1.5em}
+
+\section*{Obszar i problem}
+Wraz z dynamicznym rozwojem technologii w zakresie sztucznej inteligencji, w tym dużych modeli językowych (ang. \emph{Large Language Models - LLMs}), rozwiązania oparte na nich coraz częściej znajdują zastosowanie również w nauce \cite{guetal2026a}. Przy wyborze modelu wykorzystywanego do pracy koszt nie jest jedynym czynnikiem wpływającym na wybór modelu, innym istotnym czynnikiem jest ocena modelu. W naszym projekcie położymy nacisk na niektóre z trudności związane właśnie z procesem oceny takich modeli.
+
+Przykładowym sposobem oceny modeli LLM jest wykorzystanie zbioru złożonego z pytań oraz odpowiadających im wzorcowych odpowiedzi. Mając taki zestaw, model ocenia się, wysyłając do niego pytania ze zbioru, a następnie porównując uzyskane odpowiedzi z wzorcowymi \cite{zhengetal2023c,chenetal2024a}. Podejście to jest konceptualnie proste, jednak chcąc rzetelnie przeprowadzić badanie jednym z problemów staje się ilość czasu potrzebna na samo odpytywanie modelu, wynika to nie tylko z wielkości zbioru testowego, ale też z potrzeby powtarzania zapytań w celu uzyskania istotnych statystycznie wyników \cite{yagubyan2026,lee2026how}. 
+
+Jednym z zaproponowanych rozwiązań powyższego problemu jest zastąpienie ludzkiego badacza w procesie oceny modelu modelem LLM spełniającym to samo zadanie. Takie właśnie podejście w literaturze opisywane jest jako \emph{LLM-as-a-judge} \cite{zhengetal2023c,guetal2026a}. Metoda ta w wielu przypadkach pozwala nie tylko na oszczędność czasu, ale co jest z tym powiązane, również i kosztów związanych z procesem (przykładowo, wynagrodzeniem dla osób przeprowadzających badanie) \cite{zhengetal2023c,wangetal2024}.
+
+Wykorzystanie modeli LLM jako sędziów oceniających inne modele jest też obarczone pewnym ryzykiem. Modele te, podobnie jak ludzie, również narażone są na popełnianie błędów poznawczych \cite{kooetal2024a,ICLR2025_fdca08d3,chenetal2024a}, za przykłady można podać faworyzowanie pierwszej odpowiedzi \cite{wangetal2024,shietal2025a}, przychylniejszą ocenę dłuższych tekstów \cite{zhengetal2023c,parketal2024a,soumik2026} czy też bias powodujący zawyżanie ocen w przypadku kiedy model jest oceniającym i ocenianym zarazem \cite{panicksseryetal2024b,wataokaetal2025,yangetal2026a}.
+
+Często spotykanym w literaturze modelem jest GPT-4 \cite{zhengetal2023c,wangetal2024,ICLR2024_afc8b034,panicksseryetal2024b}, natomiast będąc zamkniętym modelem, wykorzystywanie go wiąże się z dodatkowymi kosztami. Jedną z alternatyw dla GPT są modele otwarte, które również można wykorzystać do tego zadania \cite{kooetal2024a,normanetal2026,yangetal2026,zhouetal2026}.
+
+W badaniach opisujących wykorzystanie otwartych modeli jako sędziów, nie badano wpływu kwantyzacji, a jedynie w \cite{angheletal2026} wszyscy sędziowie byli uruchamiani w Q4\_K\_M. W przeciwieństwie do zadań takich jak generacja tekstu, gdzie wpływ kwantyzacji na jakość tekstu czy jego stronniczość jest zjawiskiem zbadanym \cite{marchisioetal2024a,ferrara2026}, tak wpływ kwantyzacji na działanie otwartego modelu jako sędziego pozostaje niszą badawczą \cite{guetal2026a,angheletal2026}.
+
+Znaczna większość badań nad LLM-as-a-judge pozostaje przeprowadzana w oparciu o dane anglojęzyczne \cite{dogruozetal2026a}. Badania tego podejścia w innych językach, zarówno niskozasobowych (ang. \emph{low-resource languages}) \cite{dogruozetal2026a,zhouetal2026}, jak i w języku polskim \cite{karpetal2026}, pozostają natomiast stosunkowo nową dziedziną.
+
+\section*{Wnioski płynące z przeglądu literatury}
+
+Wrażliwość sędziów LLM na kolejność prezentowanych odpowiedzi (ang. \emph{position bias}) jest jednym z najlepiej udokumentowanych zjawisk w tej dziedzinie \cite{zhengetal2023c,wangetal2024,shietal2025a,kooetal2024a}. Zjawisko to nie jest przypadkowe, a jego siła zależy od sędziego i zadania. Najsilniej widać je przy porównywaniu odpowiedzi o zbliżonej jakości \cite{shietal2025a}. Niestety nie da się go wyeliminować prostymi metodami, takimi jak zwiększenie rozmiaru modelu \cite{kooetal2024a}. Autorzy badań, chcąc temu zjawisku zaradzić, proponują zarówno metody jego ograniczania, np. ocenę w obu kolejnościach \cite{wangetal2024}, jak i metryki pomiaru: PC/PF/RS \cite{shietal2025a} oraz RR/CR w ramach frameworku CALM \cite{ICLR2025_fdca08d3}. W kontekście analizowanych w tej pracy problemów szczególnie przydatna wydaje się metryka RS, pozwalająca odróżnić bias od szumu, co przy porównaniu sędziów skwantyzowanych może umożliwić rozdzielenie tych dwóch efektów. Omówione badania przeprowadzono w dużej mierze na modelach zamkniętych i wyłącznie na danych anglojęzycznych, a żadne z nich nie uwzględniało kwantyzacji sędziego, co stanowi lukę badawczą, którą niniejsza praca ma częściowo wypełnić.
+
+Position bias nie jest jednak jedynym problemem sędziów LLM. Jednym z innych biasów jest preferowanie dłuższych odpowiedzi \cite{zhengetal2023c,parketal2024a}, którego działanie okazuje się silnie zależne od modelu, a kierunek bywa przeciwny w różnych rodzinach modeli \cite{soumik2026}. W związku z tym trudno znaleźć na niego jedno uniwersalne rozwiązanie. Innym, często silniejszym efektem jest bias stylu, przejawiający się m.in. preferowaniem odpowiedzi sformatowanych w markdownie \cite{soumik2026}. Osobną grupę stanowi faworyzowanie własnych odpowiedzi (ang. \emph{self-preference}), powiązane ze zdolnością modelu do rozpoznawania własnych tekstów \cite{panicksseryetal2024b} oraz z preferowaniem tekstów, które są dla modelu bardziej przewidywalne, niezależnie od ich autorstwa \cite{wataokaetal2025}. Warto dodać, że silniejsze modele nie wykazują mniejszego self-preference \cite{yangetal2026a}. Gdy natomiast ocenia się treść pozbawioną cech stylistycznych, efekt ten zanika, a oceny zmienia już sama etykieta autorstwa \cite{chaeetal2026a}. W związku z tym w badaniu odpowiedzi powinny być anonimizowane, a pomiar biasu nie powinien ograniczać się do długości tekstu.
+
+Istotnym problemem jest także rzetelność samego pomiaru. Przy identycznych wywołaniach werdykt sędziego (w badaniu dwóch modeli GPT) zmienia się średnio w 13,6\% przypadków, a odtworzenie stabilnego werdyktu wymaga kilkunastu powtórzeń. Zjawisko to częściowo wynika z niedeterministycznego charakteru generacji, jednak dekodowanie deterministyczne jedynie je ogranicza, nie eliminując go całkowicie \cite{yagubyan2026}. Jest to poważny problem, mogący podważyć sens stosowania takich rozwiązań w zastosowaniach krytycznych, w których nie można dopuścić do różnych ocen tego samego przypadku. Powszechnie stosowana surowa zgodność werdyktów sędziego z ocenami ludzi zawyża jego jakość w porównaniu ze współczynnikiem $\kappa$ Cohena, uwzględniającym zgodność przypadkową, a wysoka powtarzalność ocen może współwystępować z silnym biasem \cite{normanetal2026}. Zmiana sędziego, nawet na większy model tej samej rodziny, zmienia z kolei wynik pomiaru \cite{yangetal2026}. Na tej podstawie można stwierdzić, że powtarzanie pomiarów, raportowanie wartości $\kappa$ oraz stosowanie korekty statystycznej wyników są niejako koniecznością \cite{lee2026how}.
+
+Wpływ kwantyzacji na jakość modeli zbadano dotychczas głównie w kontekście generacji tekstu. Jej negatywne skutki są tam znacznie silniejsze, niż wskazują metryki automatyczne: dla języka japońskiego spadek o 1,7\% w testach automatycznych odpowiadał spadkowi o 16\% w ocenie ludzi, przy czym bardziej podatne okazały się mniejsze modele \cite{marchisioetal2024a}. Kwantyzacja może również zwiększać stronniczość odpowiedzi otwartych, której nie wykrywają standardowe testy bezpieczeństwa, przy czym to, czy rośnie ona wraz ze stopniem kompresji, zależy od sędziego oceniającego odpowiedzi \cite{ferrara2026}. Wykorzystanie skwantyzowanych modeli w roli sędziów jest natomiast zagadnieniem nowym. Jedyna znaleziona praca tego typu stosowała jeden poziom kwantyzacji (Q4\_K\_M), co uniemożliwia oddzielenie jej wpływu od cech samego modelu, a proponowane w naszej pracy porównanie poziomów kwantyzacji autorzy wskazują jako kierunek dalszych badań \cite{angheletal2026}.
+
+Badania nad LLM-as-a-judge są zdominowane przez język angielski. Spośród 650 prac z ACL Anthology tylko 33 dotyczyły konfiguracji wielojęzycznych lub języków niskozasobowych (ang. \emph{low-resource languages}), przy czym zwykle wykorzystywano jednego sędziego i rzadko weryfikowano jego oceny przez ludzi \cite{dogruozetal2026a}. Sędziowie osiągają również różne wyniki w zależności od języka, np. gorsze dla języków afrykańskich niż europejskich, a przy porównaniu odpowiedzi w różnych językach preferują odpowiedzi w języku angielskim. Język polski nie był jednak uwzględniony w tych badaniach \cite{zhouetal2026}. Nieliczne prace dotyczące języka polskiego wskazują natomiast, że oceny sędziów LLM mogą znacząco odbiegać od ocen ekspertów \cite{karpetal2026}, choć dużą rolę może tu odgrywać specjalistyczny, mało typowy dla modeli ogólnego przeznaczenia charakter zadań.
+
+W przeanalizowanej literaturze nie znaleziono badań nad wpływem poziomu kwantyzacji otwartego modelu pełniącego rolę sędziego na jego biasy, w szczególności dla języka polskiego, stąd decyzja o uwzględnieniu tego zagadnienia w pytaniach badawczych.
+
+\section*{Pytania badawcze i wstępne przypuszczenia}
+Na podstawie dotychczasowych studiów literaturowych oraz wiedzy autorów formułujemy trzy pytania badawcze. Każde z nich dotyczy innej właściwości: P1 cech samego modelu, P2 sposobu jego uruchomienia, a P3 ocenianych danych.
+
+\begin{enumerate}[label=\textbf{P\arabic*.}, leftmargin=2.5em]
+  \item Jak siła position bias sędziego LLM zależy od rodziny i rozmiaru modelu?
+  \item W jakim stopniu kwantyzacja wag (BF16 $\rightarrow$ Q8 $\rightarrow$ Q4) wpływa na trafność oraz stronniczość (position bias, preferencję dłuższych odpowiedzi) modelu pełniącego rolę sędziego?
+  \item Jak język ocenianych odpowiedzi (polski vs angielski) wpływa na trafność i spójność werdyktów sędziów LLM?
+\end{enumerate}
+
+Główną motywacją stojącą za sformułowaniem powyższych pytań badawczych są wskazane w trakcie przeglądu literaturowego luki badawcze, dotyczące między innymi wpływu kwantyzacji na działanie modelu jako sędziego oraz oceny w języku polskim.
+
+Na podstawie dotychczasowej wiedzy autorów i wykonanego przeglądu literatury formułujemy następujące przypuszczenia:
+\begin{enumerate}[label=\textbf{H\arabic*.}, leftmargin=2.5em]
+  \item W obrębie jednej rodziny mniejsze modele wykazują silniejszy position bias niż większe.
+  \item Wraz ze spadkiem precyzji wag spada trafność sędziego i rośnie jego stronniczość, przy czym efekt staje się wyraźny dopiero poniżej poziomu Q8.
+  \item Sędziowie są mniej trafni i mniej spójni przy ocenie odpowiedzi w języku polskim niż w angielskim, a różnica jest mniejsza dla modelu specjalizowanego w języku polskim.
+\end{enumerate}
+
+\section*{Planowane zadania związane z eksperymentem}
+W ramach eksperymentów planowane jest wykorzystanie modeli open-weight uruchamianych lokalnie. Względem wstępnych założeń zakres rozmiarów rozszerzono w dół do ok.~4B, co pozwala porównać dwa rozmiary w obrębie każdej rodziny. Wykorzystane zostaną następujące rodziny modeli (w nawiasach rozmiary): Qwen3.5 (4B, 9B), Gemma~4 (E4B, 12B), Ministral~3 (8B, 14B) oraz Bielik~v3 (4.5B, 11B), jako model specjalizowany w języku polskim. Opcjonalnie, jako punkt odniesienia często spotykany w literaturze, uwzględniony zostanie Llama~3.1 (8B). We wszystkich modelach tryb rozumowania (ang. \emph{thinking}) pozostanie wyłączony.
+
+Eksperymenty zostaną przeprowadzone następująco:
+\begin{itemize}[leftmargin=1.5em]
+  \item \textbf{P1:} wszystkie wymienione modele w kwantyzacji Q4\_K\_M, tak aby kwantyzacja pozostała stała. Każda para odpowiedzi oceniana jest dwukrotnie, w kolejności A--B oraz B--A. Mierzone będą spójność werdyktu po zamianie kolejności, odsetek wyborów pierwszej pozycji oraz zgodność z ocenami ludzi (współczynnik $\kappa$ Cohena).
+  \item \textbf{P2:} dwa modele z różnych rodzin (Qwen3.5-9B oraz Ministral-3-8B) uruchamiane na kolejnych poziomach precyzji: BF16 (wagi niekwantyzowane), Q8\_0, Q6\_K, Q4\_K\_M i Q3\_K\_M. Wszystkie poziomy zostaną utworzone samodzielnie z tego samego pliku BF16 przy użyciu jednego narzędzia, a w raporcie podana zostanie efektywna liczba bitów na wagę. Mierzone będą trafność na parach z obiektywnie poprawną odpowiedzią oraz zmiana position bias i preferencji dłuższych odpowiedzi między poziomami.
+  \item \textbf{P3:} wybrane modele z P1 oceniają te same pary odpowiedzi w wersji angielskiej i polskiej. Porównana zostanie trafność oraz spójność werdyktów między językami.
+\end{itemize}
+
+Wszystkie modele zostaną uruchomione przy użyciu jednego silnika inferencji (llama.cpp) w jednej, ustalonej wersji, w formacie GGUF. Dzięki temu porównywane poziomy kwantyzacji nie różnią się dodatkowo implementacją. Odpowiedź sędziego zostanie ograniczona gramatyką do jednego z dwóch werdyktów, a poza samym werdyktem zapisywane będzie prawdopodobieństwo wyboru każdej z odpowiedzi, co pozwoli wykryć również niewielkie zmiany w zachowaniu sędziego. Główny pomiar przeprowadzony zostanie przy dekodowaniu deterministycznym, a dodatkowe powtórzenia przy niezerowej temperaturze posłużą do oszacowania stabilności ocen.
+
+Eksperymenty zostaną przeprowadzone na trzech maszynach: dwóch komputerach z kartą RTX~5080 (16~GB VRAM, 64~GB RAM) oraz komputerze MacBook Pro z procesorem M1 (16~GB pamięci współdzielonej). Każdy eksperyment wykonywany będzie w całości na jednej maszynie, aby różnice w obliczeniach między platformami nie wpływały na porównania. Modele w precyzji BF16, które nie mieszczą się w całości w pamięci karty graficznej, zostaną częściowo przeniesione do pamięci RAM, co wydłuża czas obliczeń, ale nie zmienia ich wyniku.
+
+Opcjonalnie, jako punkt odniesienia, planowane jest wykorzystanie modelu zamkniętego dostępnego przez API, przy czym ograniczeniem będzie jego koszt. Jeżeli model taki posiada tryb rozumowania, w trakcie eksperymentu pozostanie on wyłączony.
+
+\section*{Dane}
+\begin{itemize}[leftmargin=1.5em]
+  \item \textbf{MT-Bench human judgments} \cite{zhengetal2023c}: pary odpowiedzi z ocenami ludzi, standardowy zbiór do badania position bias (P1).\\
+  \url{https://huggingface.co/datasets/lmsys/mt_bench_human_judgments}
+  \item \textbf{LLMBar} \cite{ICLR2024_afc8b034}: 419 trudnych par, w których gorsza odpowiedź wygląda lepiej (P1, P2, P3).\\
+  \url{https://github.com/princeton-nlp/LLMBar}
+  \item \textbf{JudgeBench} \cite{ICLR2025_9e720fce}: pary z obiektywnie poprawną odpowiedzią (wiedza, rozumowanie, matematyka, kod) (P2).\\
+  \url{https://github.com/ScalerLab/JudgeBench}
+  \item \textbf{EvalBiasBench (OffsetBias)} \cite{parketal2024a}: 80 ręcznie przygotowanych przypadków na konkretne typy biasu (P2).\\
+  \url{https://github.com/ncsoft/offsetbias}
+\end{itemize}
+
+\subsection*{Dane w języku polskim}
+\begin{itemize}[leftmargin=1.5em]
+  \item \textbf{LLMBar-PL}: polskie tłumaczenie zbioru LLMBar, przygotowane w ramach projektu. Etykieta wskazująca odpowiedź zgodną z poleceniem zachowuje ważność po tłumaczeniu, dzięki czemu możliwe jest porównanie trafności sędziów na tych samych parach w obu językach (P3). Jakość tłumaczenia zostanie zweryfikowana ręcznie na losowej próbie.
+  \item \textbf{PLLuM-Align}: polski zbiór preferencji tworzony w całości przez ludzkich anotatorów (oceny odpowiedzi, rankingi, dialogi wieloturowe), wykorzystany jako dodatkowy zbiór natywnie polski (P3).\\
+  \url{https://huggingface.co/datasets/NASK-PIB/PLLuM-Align}
+  \item \textbf{MT-Bench Polish (lightblue)}: 80 pytań MT-Bench przetłumaczonych na polski (GPT-4o, ręczna korekta przez rodzimą użytkowniczkę). Zbiór nie zawiera odpowiedzi ani ocen, dlatego może posłużyć jedynie do wygenerowania nowych par odpowiedzi.\\
+  \url{https://huggingface.co/datasets/lightblue/mt_bench_polish}
+\end{itemize}
+
+
+\printbibliography[title=Bibliografia]
+
+\end{document}

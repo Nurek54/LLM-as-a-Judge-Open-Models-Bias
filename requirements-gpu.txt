@@ -1,7 +1,0 @@
-# Opcjonalne: tylko do P2, sedzia w FP16 (bez kwantyzacji) jako punkt odniesienia.
-# Model 7-8B w FP16 potrzebuje ok. 16 GB VRAM, 14B ok. 28 GB.
-# torch instalowac wg https://pytorch.org/get-started/locally/ (wersja pod CUDA)
--r requirements.txt
-torch>=2.5
-transformers>=4.46
-accelerate>=1.0

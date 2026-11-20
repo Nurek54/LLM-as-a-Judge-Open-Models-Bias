@@ -1,0 +1,38 @@
+# Definicje eksperymentów. Każdy eksperyment robimy W CAŁOŚCI na jednej maszynie.
+
+defaults:
+  orders: ["12", "21"]      # 12: odpowiedź 1 jako A; 21: odpowiedź 1 jako B
+  greedy: true              # główny pomiar: temperature=0
+  sampled_repeats: 0        # dodatkowe przebiegi z T>0 do metryki stabilności (RS)
+  sampled_temperature: 0.7
+  seed: 1234
+  top_logprobs: 20
+  max_pairs_per_dataset: null   # np. 50 do szybkiego testu
+
+p1:
+  question: "Jak siła position bias sędziego LLM zależy od rodziny i rozmiaru modelu?"
+  machine: pc-5080
+  models: [qwen3.5-4b, qwen3.5-9b, gemma-4-e4b, gemma-4-12b,
+           ministral-3-8b, ministral-3-14b, bielik-4.5b, bielik-11b]
+  optional_models: [llama-3.1-8b]
+  quants: [Q4_K_M]
+  datasets: [mtbench_human, llmbar]
+  prompt_lang: en
+
+p2:
+  question: "W jakim stopniu kwantyzacja wag wpływa na trafność i stronniczość sędziego?"
+  machine: laptop-5080
+  models: [qwen3.5-9b, ministral-3-8b]
+  fallback_models: [qwen3.5-4b]     # gdy BF16 z offloadem okaże się za wolne
+  quants: [BF16, Q8_0, Q6_K, Q4_K_M, Q3_K_M]
+  datasets: [llmbar, judgebench, evalbiasbench]
+  prompt_lang: en
+  sampled_repeats: 3                # RS: odróżnienie szumu od biasu
+
+p3:
+  question: "Jak język ocenianych odpowiedzi (PL vs EN) wpływa na trafność i spójność werdyktów?"
+  machine: macbook-m1
+  models: [qwen3.5-9b, gemma-4-12b, ministral-3-8b, bielik-11b]
+  quants: [Q4_K_M]
+  datasets: [llmbar, llmbar_pl]
+  prompt_lang: auto                 # prompt w języku danych (en dla llmbar, pl dla llmbar_pl)

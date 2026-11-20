@@ -1,14 +1,22 @@
-# P2: Wpływ kwantyzacji na stronniczość sędziego
+# P2: Wpływ kwantyzacji na sędziego
 
-**Pytanie:** Czy kwantyzacja (FP16, Q8, Q4) zwiększa stronniczość sędziego?
+**Pytanie:** W jakim stopniu kwantyzacja wag (BF16 → Q8 → Q4) wpływa na trafność oraz
+stronniczość (position bias, preferencja dłuższych odpowiedzi) modelu pełniącego rolę sędziego?
 
-**Zmienne:** poziom kwantyzacji tego samego modelu. Model, prompt i dane bez zmian.
+**Hipoteza H2:** wraz ze spadkiem precyzji spada trafność i rośnie stronniczość; efekt
+wyraźny dopiero poniżej Q8.
 
-**Metryki:** zmiana position consistency i length bias między poziomami, trafność na parach
-z poprawną odpowiedzią.
+**Zmienna niezależna:** poziom kwantyzacji tego samego modelu: BF16, Q8_0, Q6_K, Q4_K_M, Q3_K_M.
+Wszystkie poziomy z jednego pliku BF16, jednym buildem `llama-quantize`, bez imatrix.
+Prompt, dane, silnik i ustawienia serwera bez zmian.
 
-**Dane:** JudgeBench, EvalBiasBench, LLMBar.
+**Modele:** qwen3.5-9b, ministral-3-8b (zapasowo qwen3.5-4b, mieści się w VRAM w BF16).
 
-**Uwaga sprzętowa:** FP16 dla 7-8B wymaga ok. 16 GB VRAM. Jeśli brak, punktem odniesienia jest Q8.
+**Metryki:** accuracy, κ, position consistency, first_rate / pb, soft position bias (z logprobs),
+longer_rate i accuracy przy gold dłuższej/krótszej, format_mass, RS (3 powtórzenia przy T=0.7).
+Bity na wagę z `scripts/models.py info`. Test McNemara między poziomami
+(`scripts/analyze.py p2 --mcnemar <model> BF16 <quant> --dataset <zbiór>`).
 
-**Luka badawcza:** wpływ kwantyzacji na bias jest badany poza rolą sędziego, ale nie w niej.
+**Dane:** LLMBar, JudgeBench (350 par, odpowiedzi GPT-4o), EvalBiasBench (80 par).
+
+**Maszyna:** laptop RTX 5080 (cały eksperyment). BF16 z częściowym offloadem do RAM.

@@ -1,16 +1,21 @@
-# This is a sample Python script.
+"""Punkt wejścia: patrz docs/setup.md. Skróty do skryptów:
 
-# Press Shift+F10 to execute it or replace it with your code.
-# Press Double Shift to search everywhere for classes, files, tool windows, actions, and settings.
+  python main.py data          -> scripts/prepare_data.py
+  python main.py run p1 ...    -> scripts/run.py p1 ...
+  python main.py analyze p1    -> scripts/analyze.py p1
+  python main.py models list   -> scripts/models.py list
+"""
+import runpy
+import sys
+from pathlib import Path
 
+SCRIPTS = {"data": "prepare_data.py", "run": "run.py", "analyze": "analyze.py",
+           "models": "models.py", "translate": "translate_llmbar.py"}
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press Ctrl+F8 to toggle the breakpoint.
-
-
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
-
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+if __name__ == "__main__":
+    if len(sys.argv) < 2 or sys.argv[1] not in SCRIPTS:
+        print(__doc__)
+        sys.exit(1)
+    script = Path(__file__).parent / "scripts" / SCRIPTS[sys.argv[1]]
+    sys.argv = [str(script)] + sys.argv[2:]
+    runpy.run_path(str(script), run_name="__main__")
