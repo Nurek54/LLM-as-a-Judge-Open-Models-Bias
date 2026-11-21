@@ -55,13 +55,13 @@ models:
     size_b: 4.5               # efektywnie; 8B z embeddingami
     original: google/gemma-4-E4B-it
     source: {repo: unsloth/gemma-4-E4B-it-GGUF, pattern: "gemma-4-E4B-it-BF16.gguf"}
-    chat_template_kwargs: {}
+    chat_template_kwargs: {enable_thinking: false}
   gemma-4-12b:
     family: gemma4
     size_b: 12
     original: google/gemma-4-12B-it
     source: {repo: unsloth/gemma-4-12b-it-GGUF, pattern: "gemma-4-12b-it-BF16.gguf"}
-    chat_template_kwargs: {}
+    chat_template_kwargs: {enable_thinking: false}
     assistant_prefill: null    # patrz komentarz na górze
 
   # ---------------- Ministral 3 ----------------
