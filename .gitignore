@@ -11,16 +11,20 @@ __pycache__/
 # Sekrety (klucze API)
 .env
 
-# Duze pliki: dane, modele, surowe wyniki
+# Duze pliki: surowe dane i modele (odtwarzalne skryptami, GB)
 data/raw/*
-data/processed/*
 !data/**/.gitkeep
 models/*
 !models/.gitkeep
 *.gguf
 *.safetensors
-results/*
-!results/.gitkeep
+
+# W repo zostaja (male, a odtwarzanie trwa godziny albo kosztuje):
+#   data/processed/*.jsonl  - przetworzone zbiory, w tym tlumaczenie LLMBar-PL
+#   results/<exp>/*.jsonl   - surowe wyniki sedziow
+#   results/<exp>/*.csv     - podsumowania metryk
+# Logi serwera llama.cpp pomijamy.
+results/*/logs/
 
 # LaTeX
 *.aux

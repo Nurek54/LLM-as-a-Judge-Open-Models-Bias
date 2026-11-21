@@ -37,6 +37,11 @@ def run(exp_name: str, model_key: str, quant: str, *, limit: int | None = None,
     out_path = RESULTS / exp_name / f"{model_key}__{quant}.jsonl"
     out_path.parent.mkdir(parents=True, exist_ok=True)
     done = {_key(r) for r in read_jsonl(out_path)} if out_path.exists() else set()
+    if out_path.exists() and out_path.stat().st_size:
+        with open(out_path, "rb+") as fb:  # po przerwaniu: domknij uciętą linię
+            fb.seek(-1, 2)
+            if fb.read(1) != b"\n":
+                fb.write(b"\n")
 
     build = check_build()
     host = f"{socket.gethostname()} ({platform.system()} {platform.machine()})"

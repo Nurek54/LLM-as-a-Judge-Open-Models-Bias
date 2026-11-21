@@ -1,0 +1,98 @@
+[
+  {
+    "model": "qwen3.5-4b",
+    "quant": "BF16",
+    "size_gb": 8.42,
+    "n_params": 4205751296,
+    "bpw": 16.025,
+    "sha256": "9e6e2841a75f503ccb330831832fd7861266e187e0dbf149a954219ccb8c197a"
+  },
+  {
+    "model": "qwen3.5-4b",
+    "quant": "Q4_K_M",
+    "size_gb": 2.71,
+    "n_params": 4205751296,
+    "bpw": 5.153,
+    "sha256": "14a328657cee35fa0b31ab7035a37f42e6bf41754a7b72a7410c236ef9bcb7e4"
+  },
+  {
+    "model": "qwen3.5-9b",
+    "quant": "BF16",
+    "size_gb": 17.92,
+    "n_params": 8953803264,
+    "bpw": 16.012,
+    "sha256": "daebe40eeea7057c1cdf35ac56d13f507d8bf12171bbb7a6b6b0d3f05439159a"
+  },
+  {
+    "model": "qwen3.5-9b",
+    "quant": "Q8_0",
+    "size_gb": 9.53,
+    "n_params": 8953803264,
+    "bpw": 8.513,
+    "sha256": "be9cef21702a5d153a7de4761bc160f01104b5a95d1bec5e5b88ebdbb45ddef5"
+  },
+  {
+    "model": "qwen3.5-9b",
+    "quant": "Q6_K",
+    "size_gb": 7.36,
+    "n_params": 8953803264,
+    "bpw": 6.575,
+    "sha256": "ae385d1a58191a0b188a4656f229497583d724ba9955a7c400967d1ab603becb"
+  },
+  {
+    "model": "qwen3.5-9b",
+    "quant": "Q4_K_M",
+    "size_gb": 5.63,
+    "n_params": 8953803264,
+    "bpw": 5.029,
+    "sha256": "1a5b4c78879067d135370b414fa37a7a0e00dbb26fcf33951a69e56462f71c03"
+  },
+  {
+    "model": "qwen3.5-9b",
+    "quant": "Q3_K_M",
+    "size_gb": 4.62,
+    "n_params": 8953803264,
+    "bpw": 4.131,
+    "sha256": "44561b56b1d674eeec70bf378edd43681cd715cbdfa0024ce6afa7ea660cf547"
+  },
+  {
+    "model": "ministral-3-8b",
+    "quant": "BF16",
+    "size_gb": 16.99,
+    "n_params": 8489553920,
+    "bpw": 16.008,
+    "sha256": "fa785e6a56f240dacbc451ea4aaab501d11f5903005903cec6e0ba11c30e3357"
+  },
+  {
+    "model": "ministral-3-8b",
+    "quant": "Q8_0",
+    "size_gb": 9.03,
+    "n_params": 8489553920,
+    "bpw": 8.509,
+    "sha256": "bd0ca58473b64618df4d08c1410cc25c910ca84e647833ebaf099e0fc0523b45"
+  },
+  {
+    "model": "ministral-3-8b",
+    "quant": "Q6_K",
+    "size_gb": 6.97,
+    "n_params": 8489553920,
+    "bpw": 6.571,
+    "sha256": "e759eed6e76793421f0c5a32d427f3b1b422f14d9234310af24e5030b21a0971"
+  },
+  {
+    "model": "ministral-3-8b",
+    "quant": "Q4_K_M",
+    "size_gb": 5.2,
+    "n_params": 8489553920,
+    "bpw": 4.899,
+    "sha256": "33e7a72cf5e6e2cfc2f2847075acc013d68bba023e35310cef86b5cf8fdca761"
+  },
+  {
+    "model": "ministral-3-8b",
+    "quant": "Q3_K_M",
+    "size_gb": 4.24,
+    "n_params": 8489553920,
+    "bpw": 3.998,
+    "sha256": "99b8e8cec2f445972869828fc5eada7caa52dc10264e938cd93412d4ef13c71b"
+  }
+]

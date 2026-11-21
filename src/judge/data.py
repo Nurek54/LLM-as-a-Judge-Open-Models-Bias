@@ -43,10 +43,15 @@ def write_jsonl(path: Path, rows: Iterable[dict]) -> int:
 
 
 def read_jsonl(path: Path) -> Iterator[dict]:
+    """Czyta JSONL; pomija uciętą linię (np. po przerwaniu przebiegu Ctrl+C)."""
     with open(path, encoding="utf-8") as f:
         for line in f:
-            if line.strip():
+            if not line.strip():
+                continue
+            try:
                 yield json.loads(line)
+            except json.JSONDecodeError:
+                print(f"[UWAGA] pominięto uszkodzoną linię w {path.name}")
 
 
 def load_pairs(dataset: str, limit: int | None = None) -> list[dict]:
