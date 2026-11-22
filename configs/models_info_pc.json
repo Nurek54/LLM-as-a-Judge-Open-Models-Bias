@@ -1,0 +1,82 @@
+[
+  {
+    "model": "qwen3.5-4b",
+    "quant": "Q4_K_M",
+    "size_gb": 2.71,
+    "n_params": 4205751296,
+    "bpw": 5.153,
+    "sha256": "14a328657cee35fa0b31ab7035a37f42e6bf41754a7b72a7410c236ef9bcb7e4",
+    "host": "PC-Grzegorz (Windows AMD64)",
+    "exp": "p1"
+  },
+  {
+    "model": "qwen3.5-9b",
+    "quant": "Q4_K_M",
+    "size_gb": 5.63,
+    "n_params": 8953803264,
+    "bpw": 5.029,
+    "sha256": "1a5b4c78879067d135370b414fa37a7a0e00dbb26fcf33951a69e56462f71c03",
+    "host": "PC-Grzegorz (Windows AMD64)",
+    "exp": "p1"
+  },
+  {
+    "model": "gemma-4-e4b",
+    "quant": "Q4_K_M",
+    "size_gb": 5.34,
+    "n_params": 7518069290,
+    "bpw": 5.677,
+    "sha256": "ab00ffd5850a5d881f1f6e5bc5e2e09692fd5c31fbca142c57775071e18e6fe1",
+    "host": "PC-Grzegorz (Windows AMD64)",
+    "exp": "p1"
+  },
+  {
+    "model": "gemma-4-12b",
+    "quant": "Q4_K_M",
+    "size_gb": 7.38,
+    "n_params": 11907350576,
+    "bpw": 4.959,
+    "sha256": "d5afb9efb2fa6e39cf9d64e96292f13f5b20c381789643fc9b6f15c9fdc3b054",
+    "host": "PC-Grzegorz (Windows AMD64)",
+    "exp": "p1"
+  },
+  {
+    "model": "ministral-3-8b",
+    "quant": "Q4_K_M",
+    "size_gb": 5.2,
+    "n_params": 8489553920,
+    "bpw": 4.899,
+    "sha256": "33e7a72cf5e6e2cfc2f2847075acc013d68bba023e35310cef86b5cf8fdca761",
+    "host": "PC-Grzegorz (Windows AMD64)",
+    "exp": "p1"
+  },
+  {
+    "model": "ministral-3-14b",
+    "quant": "Q4_K_M",
+    "size_gb": 8.24,
+    "n_params": 13506073600,
+    "bpw": 4.881,
+    "sha256": "824e0f3373e69b84f2cae46fdcb9bd1ebc6ab3bfc7acc125d818b7b8178cc613",
+    "host": "PC-Grzegorz (Windows AMD64)",
+    "exp": "p1"
+  },
+  {
+    "model": "bielik-4.5b",
+    "quant": "Q4_K_M",
+    "size_gb": 2.88,
+    "n_params": 4757260288,
+    "bpw": 4.841,
+    "sha256": "acf9d285c467b3afd0203943c9e0633ad1c345ef71f857142f4f0e17f207fa4a",
+    "host": "PC-Grzegorz (Windows AMD64)",
+    "exp": "p1"
+  },
+  {
+    "model": "bielik-11b",
+    "quant": "Q4_K_M",
+    "size_gb": 6.72,
+    "n_params": 11168796672,
+    "bpw": 4.816,
+    "sha256": "89b39c556323b532621d1f936042a4eb24e86071b4902ff0ef7e826f513159af",
+    "host": "PC-Grzegorz (Windows AMD64)",
+    "exp": "p1"
+  }
+]
