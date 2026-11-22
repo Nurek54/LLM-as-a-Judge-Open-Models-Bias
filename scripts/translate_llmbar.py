@@ -18,6 +18,8 @@ import json
 import os
 import random
 import sys
+import threading
+from concurrent.futures import ThreadPoolExecutor, as_completed
 from pathlib import Path
 
 import pandas as pd
@@ -39,41 +41,80 @@ SYSTEM = (
 )
 
 
-@retry(stop=stop_after_attempt(5), wait=wait_exponential(min=2, max=60))
+def _request_kwargs() -> dict:
+    """Parametry zależne od modelu, ustawiane w .env.
+
+    TRANSLATE_SERVICE_TIER=flex      tańszy tryb OpenAI (wolniejszy, czasem 429 -> ponawiamy)
+    TRANSLATE_REASONING_EFFORT=none  dla modeli z rozumowaniem (tłumaczenie go nie potrzebuje)
+    TRANSLATE_TEMPERATURE=0          tylko dla modeli bez rozumowania (te z reasoning go nie przyjmują)
+    """
+    kw = {}
+    if v := os.getenv("TRANSLATE_SERVICE_TIER"):
+        kw["service_tier"] = v
+    if v := os.getenv("TRANSLATE_REASONING_EFFORT"):
+        kw["reasoning_effort"] = v
+    if v := os.getenv("TRANSLATE_TEMPERATURE"):
+        kw["temperature"] = float(v)
+    return kw
+
+
+@retry(stop=stop_after_attempt(8), wait=wait_exponential(min=5, max=300))
 def translate(client: OpenAI, model: str, text: str) -> str:
     if not text.strip():
         return text
     r = client.chat.completions.create(
-        model=model, temperature=0,
+        model=model, **_request_kwargs(),
         messages=[{"role": "system", "content": SYSTEM}, {"role": "user", "content": text}],
     )
-    return r.choices[0].message.content
+    out = r.choices[0].message.content
+    if not out or not out.strip():
+        raise RuntimeError("pusta odpowiedź tłumacza")
+    return out
+
+
+def translate_pair(client: OpenAI, model: str, p: dict) -> dict:
+    return dict(p, pair_id=p["pair_id"].replace("llmbar/", "llmbar_pl/", 1),
+                dataset="llmbar_pl", lang="pl",
+                instruction=translate(client, model, p["instruction"]),
+                response_1=translate(client, model, p["response_1"]),
+                response_2=translate(client, model, p["response_2"]),
+                meta={**p["meta"], "translator": model, **_request_kwargs()})
 
 
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--limit", type=int)
+    ap.add_argument("--workers", type=int, default=8, help="równoległe pary (tryb flex jest wolny)")
     ap.add_argument("--sample", type=int, default=40, help="ile par do ręcznej weryfikacji")
     a = ap.parse_args()
 
     client = OpenAI(base_url=os.getenv("TRANSLATE_BASE_URL"),
-                    api_key=os.getenv("TRANSLATE_API_KEY") or os.getenv("OPENAI_API_KEY") or "x")
+                    api_key=os.getenv("TRANSLATE_API_KEY") or os.getenv("OPENAI_API_KEY") or "x",
+                    timeout=900)
     model = os.environ["TRANSLATE_MODEL"]
     out = DATA_PROCESSED / "llmbar_pl.jsonl"
     done = {r["pair_id"] for r in read_jsonl(out)} if out.exists() else set()
+    todo = [p for p in load_pairs("llmbar", a.limit)
+            if p["pair_id"].replace("llmbar/", "llmbar_pl/", 1) not in done]
+    print(f"model={model} {_request_kwargs()} | do przetłumaczenia: {len(todo)} par")
 
-    with open(out, "a", encoding="utf-8") as f:
-        for p in tqdm(load_pairs("llmbar", a.limit)):
-            pid = p["pair_id"].replace("llmbar/", "llmbar_pl/", 1)
-            if pid in done:
+    lock = threading.Lock()
+    failed = []
+    with open(out, "a", encoding="utf-8") as f, ThreadPoolExecutor(a.workers) as ex:
+        futs = {ex.submit(translate_pair, client, model, p): p["pair_id"] for p in todo}
+        for fut in tqdm(as_completed(futs), total=len(futs)):
+            try:
+                row = fut.result()
+            except Exception as e:  # noqa: BLE001
+                failed.append((futs[fut], repr(e)))
                 continue
-            row = dict(p, pair_id=pid, dataset="llmbar_pl", lang="pl",
-                       instruction=translate(client, model, p["instruction"]),
-                       response_1=translate(client, model, p["response_1"]),
-                       response_2=translate(client, model, p["response_2"]),
-                       meta={**p["meta"], "translator": model})
-            f.write(json.dumps(row, ensure_ascii=False) + "\n")
-            f.flush()
+            with lock:
+                f.write(json.dumps(row, ensure_ascii=False) + "\n")
+                f.flush()
+    if failed:
+        print(f"[UWAGA] {len(failed)} par się nie udało (odpal ponownie, zostaną dorobione):")
+        for pid, err in failed[:10]:
+            print("  ", pid, err[:200])
 
     en = {p["pair_id"].split("/", 1)[1]: p for p in load_pairs("llmbar")}
     pl = list(read_jsonl(out))
