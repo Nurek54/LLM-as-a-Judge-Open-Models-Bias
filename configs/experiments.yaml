@@ -31,7 +31,7 @@ p2:
 
 p3:
   question: "Jak język ocenianych odpowiedzi (PL vs EN) wpływa na trafność i spójność werdyktów?"
-  machine: macbook-m1
+  machine: pc-5080
   models: [qwen3.5-9b, gemma-4-12b, ministral-3-8b, bielik-11b]
   quants: [Q4_K_M]
   datasets: [llmbar, llmbar_pl]
