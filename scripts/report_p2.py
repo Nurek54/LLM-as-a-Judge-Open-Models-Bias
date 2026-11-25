@@ -63,6 +63,8 @@ def _pair_scores(df: pd.DataFrame, value: str) -> pd.Series:
         return (t["12"] == t["21"]).astype(float)
     if value == "first":
         return g.assign(a=(g["slot"] == "A").astype(float)).groupby("pair_id")["a"].mean()
+    if value == "longer":  # odsetek wyborów dłuższej odpowiedzi (obie kolejności)
+        return g.assign(l=g["chose_longer"].astype(float)).groupby("pair_id")["l"].mean()
     raise ValueError(value)
 
 
@@ -100,7 +102,7 @@ def tests(df: pd.DataFrame) -> pd.DataFrame:
                 if cur.empty:
                     continue
                 for value, name in [("correct", "accuracy"), ("consistent", "pc"),
-                                    ("first", "first_rate")]:
+                                    ("first", "first_rate"), ("longer", "longer_rate")]:
                     a, b = _pair_scores(base, value), _pair_scores(cur, value)
                     common = a.index.intersection(b.index)
                     d = (b[common] - a[common]).to_numpy()
@@ -163,8 +165,8 @@ def figure(summ: pd.DataFrame, path: Path) -> None:
 # --------------------------------------------------------------------- LaTeX
 def latex_table(summ: pd.DataFrame, t: pd.DataFrame, path: Path) -> None:
     sig = {(r.model, r.dataset, r.quant, r.metric): r.sig for r in t.itertuples()}
-    lines = [r"\begin{tabular}{llrrrrr}", r"\toprule",
-             r"Model & Zbiór & Poziom (bpw) & Trafność & PC & Pozycja A & Masa A+B \\",
+    lines = [r"\begin{tabular}{llrrrrrr}", r"\toprule",
+             r"Model & Zbiór & Poziom (bpw) & Trafność & PC & Pozycja A & Dłuższa & Masa A+B \\",
              r"\midrule"]
     for m in sorted(summ["model"].unique()):
         for ds in DATASETS:
@@ -178,7 +180,8 @@ def latex_table(summ: pd.DataFrame, t: pd.DataFrame, path: Path) -> None:
                 mass = f"{r.format_mass:.3f}".replace(".", ",")
                 lines.append(
                     f"{m} & {DS_LABEL[ds]} & {quant} ({bpw}) & {cell('accuracy', r.accuracy)} & "
-                    f"{cell('pc', r.pc)} & {cell('first_rate', r.first_rate)} & {mass} " + r"\\")
+                    f"{cell('pc', r.pc)} & {cell('first_rate', r.first_rate)} & "
+                    f"{cell('longer_rate', r.longer_rate)} & {mass} " + r"\\")
             lines.append(r"\midrule")
     lines[-1] = r"\bottomrule"
     lines.append(r"\end{tabular}")
@@ -198,7 +201,7 @@ def main():
     latex_table(summ, t, OUT / "table_p2.tex")
 
     with pd.option_context("display.width", 200, "display.max_columns", None):
-        show = t[t.metric.isin(["accuracy", "pc", "first_rate"])].copy()
+        show = t.copy()
         show[["bf16", "value", "diff"]] = show[["bf16", "value", "diff"]].round(3)
         show[["p", "p_holm"]] = show[["p", "p_holm"]].round(4)
         print(show.to_string(index=False))

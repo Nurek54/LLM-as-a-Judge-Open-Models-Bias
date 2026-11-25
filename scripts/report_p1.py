@@ -58,6 +58,7 @@ def pair_level(g: pd.DataFrame) -> pd.DataFrame:
         "first_rate": first,
         "soft_pos_bias": t["p_slot_a_12"] + t["p_slot_a_21"] - 1,
         "accuracy": t[["correct_12", "correct_21"]].astype(float).mean(axis=1),
+        "longer_rate": g0.assign(l=g0["chose_longer"].astype(float)).groupby("pair_id")["l"].mean(),
     })
 
 

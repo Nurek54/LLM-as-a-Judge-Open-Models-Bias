@@ -1,41 +1,41 @@
-\begin{tabular}{llrrrrr}
+\begin{tabular}{llrrrrrr}
 \toprule
-Model & Zbiór & Poziom (bpw) & Trafność & PC & Pozycja A & Masa A+B \\
+Model & Zbiór & Poziom (bpw) & Trafność & PC & Pozycja A & Dłuższa & Masa A+B \\
 \midrule
-ministral-3-8b & LLMBar & BF16 (16,0) & 0,599 & 0,699 & 0,376 & 0,985 \\
-ministral-3-8b & LLMBar & Q8\_0 (8,5) & 0,604 & 0,699 & 0,376 & 0,985 \\
-ministral-3-8b & LLMBar & Q6\_K (6,6) & 0,600 & 0,673* & 0,363* & 0,983 \\
-ministral-3-8b & LLMBar & Q4\_K\_M (4,9) & 0,607 & 0,759* & 0,418* & 0,934 \\
-ministral-3-8b & LLMBar & Q3\_K\_M (4,0) & 0,593 & 0,573* & 0,289* & 0,988 \\
+ministral-3-8b & LLMBar & BF16 (16,0) & 0,599 & 0,699 & 0,376 & 0,551 & 0,985 \\
+ministral-3-8b & LLMBar & Q8\_0 (8,5) & 0,604 & 0,699 & 0,376 & 0,547 & 0,985 \\
+ministral-3-8b & LLMBar & Q6\_K (6,6) & 0,600 & 0,673* & 0,363* & 0,548 & 0,983 \\
+ministral-3-8b & LLMBar & Q4\_K\_M (4,9) & 0,607 & 0,759* & 0,418* & 0,567 & 0,934 \\
+ministral-3-8b & LLMBar & Q3\_K\_M (4,0) & 0,593 & 0,573* & 0,289* & 0,533 & 0,988 \\
 \midrule
-ministral-3-8b & JudgeBench & BF16 (16,0) & 0,626 & 0,600 & 0,340 & 0,953 \\
-ministral-3-8b & JudgeBench & Q8\_0 (8,5) & 0,616 & 0,586 & 0,333 & 0,954 \\
-ministral-3-8b & JudgeBench & Q6\_K (6,6) & 0,611 & 0,537* & 0,283* & 0,950 \\
-ministral-3-8b & JudgeBench & Q4\_K\_M (4,9) & 0,613 & 0,523* & 0,316 & 0,894 \\
-ministral-3-8b & JudgeBench & Q3\_K\_M (4,0) & 0,600 & 0,411* & 0,209* & 0,960 \\
+ministral-3-8b & JudgeBench & BF16 (16,0) & 0,626 & 0,600 & 0,340 & 0,460 & 0,953 \\
+ministral-3-8b & JudgeBench & Q8\_0 (8,5) & 0,616 & 0,586 & 0,333 & 0,456 & 0,954 \\
+ministral-3-8b & JudgeBench & Q6\_K (6,6) & 0,611 & 0,537* & 0,283* & 0,477 & 0,950 \\
+ministral-3-8b & JudgeBench & Q4\_K\_M (4,9) & 0,613 & 0,523* & 0,316 & 0,459 & 0,894 \\
+ministral-3-8b & JudgeBench & Q3\_K\_M (4,0) & 0,600 & 0,411* & 0,209* & 0,471 & 0,960 \\
 \midrule
-ministral-3-8b & EvalBiasBench & BF16 (16,0) & 0,644 & 0,662 & 0,369 & 0,987 \\
-ministral-3-8b & EvalBiasBench & Q8\_0 (8,5) & 0,650 & 0,675 & 0,375 & 0,987 \\
-ministral-3-8b & EvalBiasBench & Q6\_K (6,6) & 0,650 & 0,675 & 0,362 & 0,986 \\
-ministral-3-8b & EvalBiasBench & Q4\_K\_M (4,9) & 0,637 & 0,725 & 0,412 & 0,938 \\
-ministral-3-8b & EvalBiasBench & Q3\_K\_M (4,0) & 0,637 & 0,525* & 0,275* & 0,989 \\
+ministral-3-8b & EvalBiasBench & BF16 (16,0) & 0,644 & 0,662 & 0,369 & 0,494 & 0,987 \\
+ministral-3-8b & EvalBiasBench & Q8\_0 (8,5) & 0,650 & 0,675 & 0,375 & 0,500 & 0,987 \\
+ministral-3-8b & EvalBiasBench & Q6\_K (6,6) & 0,650 & 0,675 & 0,362 & 0,500 & 0,986 \\
+ministral-3-8b & EvalBiasBench & Q4\_K\_M (4,9) & 0,637 & 0,725 & 0,412 & 0,512 & 0,938 \\
+ministral-3-8b & EvalBiasBench & Q3\_K\_M (4,0) & 0,637 & 0,525* & 0,275* & 0,475 & 0,989 \\
 \midrule
-qwen3.5-9b & LLMBar & BF16 (16,0) & 0,697 & 0,800 & 0,550 & 0,999 \\
-qwen3.5-9b & LLMBar & Q8\_0 (8,5) & 0,692 & 0,785 & 0,557 & 0,999 \\
-qwen3.5-9b & LLMBar & Q6\_K (6,6) & 0,697 & 0,790 & 0,550 & 0,999 \\
-qwen3.5-9b & LLMBar & Q4\_K\_M (5,0) & 0,683 & 0,728* & 0,586* & 0,999 \\
-qwen3.5-9b & LLMBar & Q3\_K\_M (4,1) & 0,594* & 0,613* & 0,646* & 0,759 \\
+qwen3.5-9b & LLMBar & BF16 (16,0) & 0,697 & 0,800 & 0,550 & 0,475 & 0,999 \\
+qwen3.5-9b & LLMBar & Q8\_0 (8,5) & 0,692 & 0,785 & 0,557 & 0,480 & 0,999 \\
+qwen3.5-9b & LLMBar & Q6\_K (6,6) & 0,697 & 0,790 & 0,550 & 0,470 & 0,999 \\
+qwen3.5-9b & LLMBar & Q4\_K\_M (5,0) & 0,683 & 0,728* & 0,586* & 0,487 & 0,999 \\
+qwen3.5-9b & LLMBar & Q3\_K\_M (4,1) & 0,594* & 0,613* & 0,646* & 0,544* & 0,759 \\
 \midrule
-qwen3.5-9b & JudgeBench & BF16 (16,0) & 0,661 & 0,689 & 0,447 & 0,978 \\
-qwen3.5-9b & JudgeBench & Q8\_0 (8,5) & 0,673 & 0,706 & 0,467* & 0,979 \\
-qwen3.5-9b & JudgeBench & Q6\_K (6,6) & 0,657 & 0,691 & 0,454 & 0,981 \\
-qwen3.5-9b & JudgeBench & Q4\_K\_M (5,0) & 0,650 & 0,631 & 0,390* & 0,977 \\
-qwen3.5-9b & JudgeBench & Q3\_K\_M (4,1) & 0,609* & 0,331* & 0,809* & 0,331 \\
+qwen3.5-9b & JudgeBench & BF16 (16,0) & 0,661 & 0,689 & 0,447 & 0,410 & 0,978 \\
+qwen3.5-9b & JudgeBench & Q8\_0 (8,5) & 0,673 & 0,706 & 0,467* & 0,416 & 0,979 \\
+qwen3.5-9b & JudgeBench & Q6\_K (6,6) & 0,657 & 0,691 & 0,454 & 0,429 & 0,981 \\
+qwen3.5-9b & JudgeBench & Q4\_K\_M (5,0) & 0,650 & 0,631 & 0,390* & 0,444* & 0,977 \\
+qwen3.5-9b & JudgeBench & Q3\_K\_M (4,1) & 0,609* & 0,331* & 0,809* & 0,477* & 0,331 \\
 \midrule
-qwen3.5-9b & EvalBiasBench & BF16 (16,0) & 0,775 & 0,800 & 0,500 & 0,999 \\
-qwen3.5-9b & EvalBiasBench & Q8\_0 (8,5) & 0,762 & 0,775 & 0,512 & 0,999 \\
-qwen3.5-9b & EvalBiasBench & Q6\_K (6,6) & 0,775 & 0,825 & 0,500 & 0,998 \\
-qwen3.5-9b & EvalBiasBench & Q4\_K\_M (5,0) & 0,725 & 0,700 & 0,562 & 0,998 \\
-qwen3.5-9b & EvalBiasBench & Q3\_K\_M (4,1) & 0,688* & 0,625* & 0,625* & 0,771 \\
+qwen3.5-9b & EvalBiasBench & BF16 (16,0) & 0,775 & 0,800 & 0,500 & 0,375 & 0,999 \\
+qwen3.5-9b & EvalBiasBench & Q8\_0 (8,5) & 0,762 & 0,775 & 0,512 & 0,375 & 0,999 \\
+qwen3.5-9b & EvalBiasBench & Q6\_K (6,6) & 0,775 & 0,825 & 0,500 & 0,350 & 0,998 \\
+qwen3.5-9b & EvalBiasBench & Q4\_K\_M (5,0) & 0,725 & 0,700 & 0,562 & 0,400 & 0,998 \\
+qwen3.5-9b & EvalBiasBench & Q3\_K\_M (4,1) & 0,688* & 0,625* & 0,625* & 0,475* & 0,771 \\
 \bottomrule
 \end{tabular}

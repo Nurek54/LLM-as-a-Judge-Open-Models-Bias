@@ -45,7 +45,7 @@ METRICS = [  # (kolumna, etykieta, linia odniesienia)
     ("first_rate", "Odsetek wyborów pozycji A", 0.5),
     ("format_mass", "Masa P(A)+P(B)", None),
 ]
-TESTED = ["accuracy", "pc", "first_rate"]
+TESTED = ["accuracy", "pc", "first_rate", "longer_rate"]
 LANG_STYLE = {"en": dict(color="#2a78d6", marker="o", label="EN (LLMBar)"),
               "pl": dict(color="#eb6834", marker="s", label="PL (LLMBar-PL)")}
 INK, MUTED, GRID = "#1f1f1e", "#6b6a63", "#e4e3de"
@@ -215,8 +215,9 @@ def figure(summ: pd.DataFrame, models: list[str], path: Path) -> None:
 def latex_table(summ: pd.DataFrame, t: pd.DataFrame, models: list[str], path: Path) -> None:
     f = lambda v: f"{v:.3f}".replace(".", ",")  # noqa: E731
     sig = {(r.model, r.metric): r.sig for r in t[t.test == "PL-EN"].itertuples()}
-    lines = [r"\begin{tabular}{llrrrrr}", r"\toprule",
-             r"Model & Język & Trafność & $\kappa$ & PC & Pozycja A & Masa A+B \\", r"\midrule"]
+    lines = [r"\begin{tabular}{llrrrrrr}", r"\toprule",
+             r"Model & Język & Trafność & $\kappa$ & PC & Pozycja A & Dłuższa & Masa A+B \\",
+             r"\midrule"]
     for m in models:
         for lang in ("en", "pl"):
             r = summ[(summ.model == m) & (summ.lang == lang)]
@@ -226,6 +227,7 @@ def latex_table(summ: pd.DataFrame, t: pd.DataFrame, models: list[str], path: Pa
             star = (lambda k: sig.get((m, k), "")) if lang == "pl" else (lambda k: "")
             lines.append(f"{m} & {lang.upper()} & {f(r.accuracy)}{star('accuracy')} & {f(r.kappa)} & "
                          f"{f(r.pc)}{star('pc')} & {f(r.first_rate)}{star('first_rate')} & "
+                         f"{f(r.longer_rate)}{star('longer_rate')} & "
                          f"{f(r.format_mass)} " + r"\\")
         lines.append(r"\midrule")
     lines[-1] = r"\bottomrule"
