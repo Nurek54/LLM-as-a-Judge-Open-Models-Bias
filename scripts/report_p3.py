@@ -57,6 +57,7 @@ LANG_DEPENDENT = {  # klucz pary bez prefiksu zbioru
     "Natural/67",              # antonim "cogent"
     "Natural/75",              # synonim słowa w nawiasie
     "Adversarial/GPTInst/28",  # sortowanie alfabetyczne nazw owoców
+    "Adversarial/Manual/25",   # błędy gramatyczne w angielskich zdaniach (tłumacz je poprawił)
     "Adversarial/Manual/39",   # Wielkie Litery Na Początku Słów
     "Adversarial/Neighbor/55", # rymowany dwuwiersz
     "Adversarial/Neighbor/133",  # słowa 8-literowe

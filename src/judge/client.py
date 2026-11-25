@@ -118,6 +118,24 @@ def _letter_probs(top: list[dict]) -> tuple[float, float]:
     return pa, pb
 
 
+# Jedno trwałe połączenie (keep-alive) zamiast nowego gniazda na każdą ocenę. Bez tego Windows
+# przy dziesiątkach tysięcy zapytań potrafi wyczerpać porty efemeryczne (WinError 10048).
+_HTTP = httpx.Client(timeout=None)
+
+
+def _post_with_retry(url: str, body: dict, timeout: float, attempts: int = 5) -> httpx.Response:
+    """Ponawia wyłącznie błędy połączenia (np. chwilowy brak portu); błędy HTTP zwraca od razu."""
+    for i in range(attempts):
+        try:
+            return _HTTP.post(url, json=body, timeout=timeout)
+        except (httpx.ConnectError, httpx.RemoteProtocolError, httpx.ReadError,
+                httpx.WriteError, OSError):
+            if i == attempts - 1:
+                raise
+            time.sleep(2 ** i)
+    raise RuntimeError("unreachable")
+
+
 def judge(base_url: str, messages: list[dict], model: ModelSpec, *, temperature: float,
           seed: int, top_logprobs: int, use_grammar: bool = True,
           max_tokens: int = 1, timeout: float = 600) -> Verdict:
@@ -135,7 +153,7 @@ def judge(base_url: str, messages: list[dict], model: ModelSpec, *, temperature:
         body["grammar"] = VERDICT_GRAMMAR
     t0 = time.time()
     try:
-        r = httpx.post(f"{base_url}/v1/chat/completions", json=body, timeout=timeout)
+        r = _post_with_retry(f"{base_url}/v1/chat/completions", body, timeout)
         r.raise_for_status()
         ch = r.json()["choices"][0]
         text = ch["message"].get("content") or ""
