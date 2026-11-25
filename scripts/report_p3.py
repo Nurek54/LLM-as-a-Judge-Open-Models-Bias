@@ -56,6 +56,7 @@ LANG_DEPENDENT = {  # klucz pary bez prefiksu zbioru
     "Natural/36",              # synonimy 'sad'
     "Natural/67",              # antonim "cogent"
     "Natural/75",              # synonim słowa w nawiasie
+    "Natural/87",              # zdania ze słowem "redundant" (wykryte w ręcznej weryfikacji)
     "Adversarial/GPTInst/28",  # sortowanie alfabetyczne nazw owoców
     "Adversarial/Manual/25",   # błędy gramatyczne w angielskich zdaniach (tłumacz je poprawił)
     "Adversarial/Manual/39",   # Wielkie Litery Na Początku Słów

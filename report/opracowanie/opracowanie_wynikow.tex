@@ -48,20 +48,19 @@ Opisy słowne w tym dokumencie są roboczym streszczeniem przygotowanym z pomoc�
 
 Miejsca do uzupełnienia oznaczono tak: \TODO{kto i co}.
 
-\section*{1. Plan a realizacja -- co poprawić w \texttt{main.tex}}
-Względem aktualnej wersji z Overleafa:
+\section*{1. Plan a realizacja}
+Różnice względem planu z Etapu~I (poprawki w \texttt{main.tex} są już naniesione):
 \begin{itemize}
-  \item Tytuł nadal brzmi \emph{Etap I -- Studium literaturowe}.
   \item \textbf{Maszyny.} MacBook nie liczył żadnego eksperymentu. P1 i P3 policzono na PC Grzegorza, P2 na laptopie Kamila (oba z RTX~5080 16~GB). Każdy eksperyment w całości na jednej maszynie, tak jak planowaliśmy.
-  \item \textbf{Zdanie o offloadzie} (,,częściowo przeniesione do pamięci RAM, co wydłuża czas obliczeń, ale nie zmienia ich wyniku'') warto złagodzić. Nie sprawdzaliśmy tego bezpośrednio, a zmierzyliśmy, że ten sam plik Q4 na dwóch różnych komputerach daje ok.~1\% innych werdyktów (punkt~6.4). Bezpieczniej: ,,wydłuża czas obliczeń''.
-  \item \textbf{P2:} drabina objęła 5 poziomów (BF16, Q8\_0, Q6\_K, Q4\_K\_M, Q3\_K\_M), a nie tylko BF16$\rightarrow$Q8$\rightarrow$Q4 z treści pytania P2. W sekcji planu jest to już opisane; pytanie P2 można rozszerzyć o Q3.
+  \item \textbf{Zdanie o offloadzie} złagodzone do ,,wydłuża czas obliczeń'' (bez ,,ale nie zmienia ich wyniku''). Nie sprawdzaliśmy tego bezpośrednio, a zmierzyliśmy, że ten sam plik Q4 na dwóch różnych komputerach daje ok.~1\% innych werdyktów (punkt~6.4).
+  \item \textbf{P2:} drabina objęła 5 poziomów (BF16, Q8\_0, Q6\_K, Q4\_K\_M, Q3\_K\_M), a nie tylko BF16$\rightarrow$Q8$\rightarrow$Q4 z treści pytania P2. Pytanie P2 rozszerzono o Q3.
   \item \textbf{Efektywne bity na wagę} są wyższe niż nazwa poziomu: Q4\_K\_M to 4,8--5,7~bpw zależnie od modelu, Q3\_K\_M ok.~4,0--4,1~bpw (tab.~\ref{tab:models}).
-  \item \textbf{P3:} użyty został wyłącznie LLMBar-PL (nasze tłumaczenie). PLLuM-Align i MT-Bench Polish nie zostały wykorzystane, więc z sekcji danych trzeba je usunąć albo opisać jako niewykorzystane.
-  \item \textbf{Weryfikacja tłumaczenia}: ręczne sprawdzenie 40 losowych par jeszcze się nie odbyło (0/40). \TODO{Kamil: wypełnić \texttt{data/processed/llmbar\_pl\_weryfikacja.csv}}.
-  \item \textbf{Opcjonalne elementy pominięte}: Llama~3.1 8B oraz model zamknięty przez API (jako sędzia) nie zostały uruchomione.
+  \item \textbf{P3:} użyty został wyłącznie LLMBar-PL (nasze tłumaczenie). PLLuM-Align i MT-Bench Polish nie zostały wykorzystane i usunięto je z sekcji danych.
+  \item \textbf{Weryfikacja tłumaczenia}: ręczne sprawdzenie 40 losowych par jest w toku; wyniki trafią do pliku \texttt{data/processed/}\allowbreak\texttt{llmbar\_pl\_weryfikacja.csv}.
+  \item \textbf{Opcjonalne elementy pominięte}: Llama~3.1 8B oraz model zamknięty przez API (jako sędzia) nie zostały uruchomione i usunięto je z planu.
   \item \textbf{Bielik 4.5B} był dostępny tylko w FP16 (brak BF16), więc jego Q4\_K\_M zrobiliśmy z FP16. Pozostałe modele kwantyzowano z BF16.
   \item \textbf{RS} (stabilność powtórzeń) liczyliśmy tylko w P2. P1 i P3 to wyłącznie pomiar deterministyczny.
-  \item \textbf{Hipotezy H2 i H3} wymagają doprecyzowania po wynikach (punkty 4.3 i 5.3).
+  \item \textbf{Hipotezy H2 i H3} wymagają doprecyzowania po wynikach (punkty 4.2 i 5.3).
 \end{itemize}
 
 \section*{2. Jak działa pomiar}
@@ -237,14 +236,15 @@ Q3\_K\_M& 4,00  & 87,5 & 0,593 & 0,573\s & 0,289\s & 0,600 & 0,411\s & 0,209\s &
     \end{itemize}
   \item \textbf{Kwantyzacja wzmacnia bias, który model już ma.} Ministral w BF16 preferuje B i przy Q3 preferuje B jeszcze silniej. Qwen przy Q3 przesuwa się w stronę A, czyli tam, gdzie leżał na LLMBar już w BF16.
   \item \textbf{RS nie śledzi kwantyzacji.} RS przy $T=0{,}7$ mieści się w 0,70--0,80 na LLMBar bez wyraźnego trendu. Qwen Q3 na JudgeBench ma wręcz najwyższe RS (0,84), bo stabilnie wybiera A. Wysoka powtarzalność może więc współwystępować z silnym biasem, co zgadza się z obserwacją z literatury (Norman i in.).
-  \item \textbf{Preferencja dłuższych odpowiedzi.} Wyraźny wzrost jest tylko u Qwena przy Q3: longer\_rate na LLMBar 0,475 $\rightarrow$ 0,544, na JudgeBench 0,41 $\rightarrow$ 0,48, na EvalBiasBench 0,375 $\rightarrow$ 0,475. U Ministrala brak trendu (0,53--0,57). Tej metryki nie testowaliśmy formalnie, więc w raporcie to obserwacja opisowa.
+  \item \textbf{Preferencja dłuższych odpowiedzi rośnie tylko u Qwena.} Przy Q3 istotnie na wszystkich trzech zbiorach: LLMBar 0,475 $\rightarrow$ 0,544\s, JudgeBench 0,410 $\rightarrow$ 0,477\s, EvalBiasBench 0,375 $\rightarrow$ 0,475\s. Na JudgeBench istotnie już przy Q4 (0,444\s). U Ministrala żadna zmiana nie jest istotna (0,46--0,57 na wszystkich poziomach). Kwantyzacja może więc wzmacniać również bias długości, ale nie u każdego modelu.
 \end{itemize}
 
 \subsection*{4.2 Hipoteza H2}
 H2 (,,spada trafność i rośnie stronniczość, efekt wyraźny dopiero poniżej Q8'') potwierdza się częściowo:
 \begin{itemize}
   \item Próg się zgadza: Q8 nie zmienia niczego istotnego.
-  \item Stabilność względem kolejności (PC) i kierunek biasu pogarszają się w obu modelach najpóźniej przy Q3, a u Ministrala już od Q6.
+  \item Stabilność względem kolejności (PC) i kierunek biasu pozycji pogarszają się w obu modelach najpóźniej przy Q3, a u Ministrala już od Q6.
+  \item Preferencja dłuższych odpowiedzi rośnie istotnie tylko u Qwena (od Q4 na JudgeBench, przy Q3 na wszystkich zbiorach).
   \item Spadek trafności zależy od modelu: wyraźny u Qwena przy Q3, nieobecny u Ministrala.
 \end{itemize}
 Proponowane doprecyzowanie: \emph{kwantyzacja poniżej Q8 w pierwszej kolejności narusza spójność sędziego i wzmacnia jego istniejący bias pozycji, a spadek trafności pojawia się dopiero przy najniższych poziomach i nie u wszystkich modeli}.
@@ -271,9 +271,9 @@ Etykiety wzorcowe zostają bez zmian. Wyjątkiem jest 10 par, w których zadanie
 \cmidrule(lr){2-3}\cmidrule(lr){4-5}\cmidrule(lr){6-7}\cmidrule(lr){8-9}\cmidrule(lr){10-11}
 Model & EN & PL & EN & PL & EN & PL & EN & PL & EN & PL & Zgodność \\
 \midrule
-Gemma 4 12B    & 0,755 & 0,726 & 0,511 & 0,451 & 0,749 & 0,819\s & 0,387 & 0,469\s & 0,443 & 0,477 & 83,7\% \\
-Ministral 3 8B & 0,610 & 0,511\s & 0,219 & 0,020 & 0,754 & 0,795 & 0,418 & 0,505\s & 0,567 & 0,659 & 79,1\% \\
-Qwen3.5 9B     & 0,687 & 0,555\s & 0,375 & 0,110 & 0,742 & 0,759 & 0,584 & 0,456\s & 0,484 & 0,584 & 72,4\% \\
+Gemma 4 12B    & 0,755 & 0,726 & 0,511 & 0,451 & 0,749 & 0,819\s & 0,387 & 0,469\s & 0,443 & 0,477\s & 83,7\% \\
+Ministral 3 8B & 0,610 & 0,511\s & 0,219 & 0,020 & 0,754 & 0,795 & 0,418 & 0,505\s & 0,567 & 0,659\s & 79,1\% \\
+Qwen3.5 9B     & 0,687 & 0,555\s & 0,375 & 0,110 & 0,742 & 0,759 & 0,584 & 0,456\s & 0,484 & 0,584\s & 72,4\% \\
 Bielik 11B     & 0,566 & 0,551 & 0,130 & 0,101 & 0,814 & 0,833 & 0,488 & 0,519\s & 0,632 & 0,630 & 86,2\% \\
 \bottomrule
 \end{tabular}
@@ -283,13 +283,13 @@ Bielik 11B     & 0,566 & 0,551 & 0,130 & 0,101 & 0,814 & 0,833 & 0,488 & 0,519\s
 \centering\small
 \caption{P3, test H3: luka PL--EN Bielika minus luka innego modelu (dodatnia wartość przy trafności = Bielik traci mniej).}
 \label{tab:h3}
-\begin{tabular}{@{}l rrr@{}}
+\begin{tabular}{@{}l rrrr@{}}
 \toprule
-Porównanie & Trafność & PC & Odsetek A \\
+Porównanie & Trafność & PC & Odsetek A & longer\_rate \\
 \midrule
-Bielik vs Gemma     & $+0{,}016$ & $-0{,}050$ & $-0{,}051$\s \\
-Bielik vs Ministral & $+0{,}085$\s & $-0{,}021$ & $-0{,}056$\s \\
-Bielik vs Qwen      & $+0{,}118$\s & $+0{,}002$ & $+0{,}159$\s \\
+Bielik vs Gemma     & $+0{,}016$ & $-0{,}050$ & $-0{,}051$\s & $-0{,}037$ \\
+Bielik vs Ministral & $+0{,}085$\s & $-0{,}021$ & $-0{,}056$\s & $-0{,}094$\s \\
+Bielik vs Qwen      & $+0{,}118$\s & $+0{,}002$ & $+0{,}159$\s & $-0{,}101$\s \\
 \bottomrule
 \end{tabular}
 \end{table}
@@ -306,7 +306,7 @@ Bielik vs Qwen      & $+0{,}118$\s & $+0{,}002$ & $+0{,}159$\s \\
   \item \textbf{Trafność spada istotnie u Qwena ($-13{,}2$~pp) i Ministrala ($-9{,}9$~pp).} Oba w PL zbliżają się do poziomu losowego ($\kappa$ 0,11 i 0,02). Gemma ($-3{,}0$~pp, $p_{\text{Holm}}=0{,}07$) i Bielik ($-1{,}4$~pp) nie zmieniają trafności istotnie.
   \item \textbf{PC nie spada w żadnym modelu}, a u Gemmy wręcz istotnie rośnie (0,75 $\rightarrow$ 0,82). Część H3 o ,,mniejszej spójności'' się więc nie potwierdza.
   \item \textbf{Kierunek biasu pozycji zmienia się z językiem we wszystkich 4 modelach} (istotnie). Gemma i Ministral przesuwają się z preferencji B w stronę 0,5, Qwen z preferencji A w stronę B. Ten sam model ma więc inny bias pozycji zależnie od języka zadania.
-  \item \textbf{W PL rośnie preferencja dłuższych odpowiedzi} u Ministrala (0,57 $\rightarrow$ 0,66) i Qwena (0,48 $\rightarrow$ 0,58), czyli dokładnie w modelach, które tracą trafność. To prawdopodobny mechanizm spadku: LLMBar celowo zawiera dłuższe, ,,ładniejsze'' złe odpowiedzi. U Bielika i Gemmy tej zmiany nie ma (testu formalnego nie robiliśmy).
+  \item \textbf{W PL istotnie rośnie preferencja dłuższych odpowiedzi} u Ministrala (0,567 $\rightarrow$ 0,659\s) i Qwena (0,484 $\rightarrow$ 0,584\s), czyli dokładnie w modelach, które tracą trafność. To prawdopodobny mechanizm spadku: LLMBar celowo zawiera dłuższe, ,,ładniejsze'' złe odpowiedzi. U Gemmy wzrost jest mały, ale istotny (0,443 $\rightarrow$ 0,477\s), a u Bielika zmiany nie ma (0,632 $\rightarrow$ 0,630). W teście H3 wzrost ten jest istotnie mniejszy u Bielika niż u Ministrala i Qwena, a nieistotnie mniejszy niż u Gemmy (tab.~\ref{tab:h3}).
   \item \textbf{Zgodność werdyktów EN/PL}: od 72\% (Qwen) do 86\% (Bielik). Co czwarty werdykt Qwena zależy od języka.
   \item \textbf{Test odporności} (bez 10 par zależnych od języka, 409 par, \texttt{results/p3/report\_robust/}) daje te same wnioski. Trafność: Qwen $-13{,}4$\s{} pp, Ministral $-10{,}4$\s{} pp, Gemma $-2{,}3$~pp ns, Bielik $-1{,}3$~pp ns. H3: Bielik vs Ministral $+0{,}090$\s, vs Qwen $+0{,}121$\s, vs Gemma $+0{,}010$ ns.
 \end{itemize}
@@ -328,7 +328,7 @@ Proponowane doprecyzowanie H3: \emph{zmiana języka na polski obniża trafność
 Repozytorium & \url{https://github.com/Nurek54/LLM-as-a-Judge-Open-Models-Bias}, commit \texttt{4c744d0} (25.11.2026) \\
 System & Windows 11 Pro (obie maszyny) \TODO{Grzegorz: potwierdzić wersję Windows} \\
 Silnik inferencji & llama.cpp, build 12552 (commit \texttt{9a080f44b}), wydanie Windows x64 z CUDA~13 (biblioteki CUDA runtime 13.5); ta sama wersja zapisana w każdym rekordzie wyników (pole \texttt{llama\_build}) \\
-Sterownik NVIDIA & \TODO{Kamil i Grzegorz: wersja z \texttt{nvidia-smi}} \\
+Sterownik NVIDIA & laptop Kamila: 621.24 (CUDA UMD 13.5, tryb WDDM); PC Grzegorza: \TODO{Grzegorz: wersja z \texttt{nvidia-smi}} \\
 Python & CPython 3.12.10 (wirtualne środowisko \texttt{.venv}) \\
 Biblioteki (kluczowe) & numpy 2.5.5, pandas 3.1.1, scipy 1.18.1, statsmodels 0.15.0, scikit-learn 1.9.1, matplotlib 3.11.2, seaborn 0.13.2, httpx 0.28.1, openai 3.57.0, datasets 5.2.0, huggingface\_hub 2.4.0, gguf 0.19.0, pyarrow 26.0.1, PyYAML 6.0.3, python-dotenv 1.2.4, tenacity 9.2.1, tqdm 4.70.1 \\
 Tłumacz (P3) & OpenAI \texttt{gpt-6-luna}, \texttt{service\_tier=flex}, \texttt{reasoning\_effort=none}, prompt v4. Tłumaczenie nie jest deterministyczne, dlatego gotowy plik \texttt{data/processed/llmbar\_pl.jsonl} jest w repozytorium. \\
@@ -418,9 +418,7 @@ Konfiguracja modeli i eksperymentów jest w \texttt{configs/models.yaml} i \text
 \section*{8. Lista TODO}
 \begin{itemize}
   \item \TODO{Grzegorz} specyfikacja PC (model/płyta, CPU, RAM, wariant RTX 5080, dysk, system) i wersja sterownika NVIDIA; ewentualnie \texttt{pip freeze}.
-  \item \TODO{Kamil} wersja sterownika NVIDIA na laptopie.
-  \item \TODO{Kamil} ręczna weryfikacja 40 par tłumaczenia i commit pliku \texttt{llmbar\_pl\_weryfikacja.csv}; wynik (np. ,,$x$/40 poprawnych'') dopisać do punktu 5.1.
-  \item \TODO{Miłosz} poprawki z punktu 1, przeredagowanie hipotez H2 i H3, sekcja wyników i sekcja o AI własnymi słowami.
+  \item \TODO{Miłosz} przeredagowanie hipotez H2 i H3, sekcja wyników i sekcja o AI własnymi słowami.
 \end{itemize}
 
 \end{document}
